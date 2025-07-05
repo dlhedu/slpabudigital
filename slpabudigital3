@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schullehrplan ABU - Kanton Zürich</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Zürich Corporate Colors */
+            --zh-blue: #0F05A0;
+            --zh-light-blue: #00A8E8;
+            --zh-cyan: #00D7FF;
+            --zh-dark-blue: #003DA5;
+            --zh-gray-100: #F8F8F8;
+            --zh-gray-200: #E5E5E5;
+            --zh-gray-300: #CCCCCC;
+            --zh-gray-400: #999999;
+            --zh-gray-500: #666666;
+            --zh-gray-600: #333333;
+            --zh-black: #000000;
+            --zh-white: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--zh-gray-600);
+            background-color: var(--zh-white);
+        }
+
+        /* Header mit Zürich-typischem Dreieck */
+        header {
+            background-color: var(--zh-blue);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-triangle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 120px 200px;
+            border-color: transparent transparent var(--zh-light-blue) transparent;
+            opacity: 0.3;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Navigation */
+        .tab-navigation {
+            background-color: var(--zh-gray-100);
+            border-bottom: 1px solid var(--zh-gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tabs {
+            display: flex;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .tab button {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--zh-gray-500);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab button:hover {
+            color: var(--zh-blue);
+            background-color: var(--zh-gray-200);
+        }
+
+        .tab button.active {
+            color: var(--zh-blue);
+            background-color: var(--zh-white);
+            border-bottom-color: var(--zh-blue);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Content Sections */
+        .tab-content {
+            padding: 3rem 0;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards */
+        .competence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .competence-card {
+            background: var(--zh-white);
+            border: 1px solid var(--zh-gray-200);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .competence-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--zh-blue);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.2s ease;
+        }
+
+        .competence-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .competence-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .competence-card h4 {
+            color: var(--zh-blue);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .competence-details {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--zh-gray-200);
+        }
+
+        .competence-details.active {
+            display: block;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin: 2rem 0;
+        }
+
+        .accordion-item {
+            background-color: var(--zh-white);
+            margin-bottom: 1rem;
+            border: 1px solid var(--zh-gray-200);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--zh-gray-100);
+            transition: all 0.2s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--zh-gray-200);
+        }
+
+        .accordion-header.active {
+            background-color: var(--zh-blue);
+            color: white;
+        }
+
+        .accordion-icon {
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+            color: var(--zh-blue);
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+            color: white;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.active {
+            max-height: 1000px;
+        }
+
+        .accordion-inner {
+            padding: 1.5rem;
+            background-color: var(--zh-white);
+        }
+
+        /* Process Steps */
+        .process-flow {
+            margin: 2rem 0;
+        }
+
+        .process-step {
+            background: var(--zh-white);
+            border: 1px solid var(--zh-gray-200);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 4rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .process-step:hover {
+            border-color: var(--zh-blue);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .process-number {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--zh-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .process-content {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--zh-gray-100);
+            border-left: 3px solid var(--zh-blue);
+        }
+
+        .process-content.active {
+            display: block;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: var(--zh-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--zh-dark-blue);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(15, 5, 160, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--zh-white);
+            color: var(--zh-blue);
+            border: 2px solid var(--zh-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--zh-blue);
+            color: white;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--zh-gray-100);
+            border-left: 4px solid var(--zh-blue);
+        }
+
+        .progress-bar {
+            background: var(--zh-gray-200);
+            height: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            background: var(--zh-blue);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--zh-gray-200);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--zh-gray-500);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--zh-blue);
+            background: var(--zh-gray-100);
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: var(--zh-blue);
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--zh-gray-600);
+            color: white;
+            padding: 0.5rem 1rem;
+            white-space: nowrap;
+            z-index: 10;
+            font-size: 0.85rem;
+        }
+
+        .tooltip:hover .tooltip-content {
+            display: block;
+        }
+
+        /* Typography */
+        h2 {
+            color: var(--zh-gray-600);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--zh-gray-600);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Lists */
+        ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Links */
+        .link-box {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--zh-gray-100);
+            border-left: 4px solid var(--zh-blue);
+        }
+
+        .link-box h3 {
+            margin-bottom: 1rem;
+        }
+
+        .link-box ul {
+            list-style: none;
+            margin: 0;
+        }
+
+        .link-box li {
+            margin: 0.75rem 0;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .tabs { flex-wrap: nowrap; }
+            .competence-grid { grid-template-columns: 1fr; }
+            .modal-content { width: 95%; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Schullehrplan ABU</h1>
+            <p class="subtitle">Interaktive Plattform für die Allgemeinbildung in der beruflichen Grundbildung</p>
+        </div>
+        <div class="header-triangle"></div>
+    </header>
+
+    <nav class="tab-navigation">
+        <ul class="tabs">
+            <li class="tab">
+                <button class="active" onclick="showTab('overview')">📋 Übersicht</button>
+            </li>
+            <li class="tab">
+                <button onclick="showTab('competences')">🎯 Kompetenzen</button>
+            </li>
+            <li class="tab">
+                <button onclick="showTab('structure')">🏗️ Struktur</button>
+            </li>
+            <li class="tab">
+                <button onclick="showTab('qualification')">✅ Qualifikation</button>
+            </li>
+            <li class="tab">
+                <button onclick="showTab('resources')">📚 Ressourcen</button>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Übersicht Tab -->
+        <div id="overview" class="tab-content active">
+            <h2>Willkommen beim interaktiven SLP ABU</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3>Was ist der Schullehrplan ABU?</h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-inner">
+                            <p>Der Schullehrplan für die Allgemeinbildung (SLP ABU) ist das zentrale Instrument zur Umsetzung des Rahmenlehrplans in den Berufsfachschulen. Er definiert:</p>
+                            <ul>
+                                <li>Die zu erreichenden Kompetenzen in den Bereichen Sprache & Kommunikation sowie Gesellschaft</li>
+                                <li>Die 12 Schlüsselkompetenzen für lebenslanges Lernen</li>
+                                <li>Die Themen und deren zeitliche Organisation</li>
+                                <li>Die Anforderungen an das Qualifikationsverfahren</li>
+                            </ul>
+                            <p style="margin-top: 1rem;">Der SLP ist <strong>kompetenz-, themen- und handlungsorientiert</strong> aufgebaut und berücksichtigt aktuelle gesellschaftliche Entwicklungen.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3>Grundlegende Dokumente</h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-inner">
+                            <h4>📄 Rahmenlehrplan für die Allgemeinbildung (2025)</h4>
+                            <p>Der neue Rahmenlehrplan bildet die verbindliche Grundlage für alle Schullehrpläne. Er definiert die Bildungsziele und Kompetenzen, die in der beruflichen Grundbildung erreicht werden sollen.</p>
+                            
+                            <h4 style="margin-top: 1.5rem;">📋 Verordnung des SBFI über Mindestvorschriften</h4>
+                            <p>Diese Verordnung regelt die formalen Anforderungen an die Allgemeinbildung, insbesondere die Stundendotation, die Qualifikationsverfahren und die Differenzierung nach Lehrdauer.</p>
+                            
+                            <h4 style="margin-top: 1.5rem;">📖 ABU Handbuch</h4>
+                            <p>Das Handbuch bietet praktische Anleitungen zur Erstellung und Umsetzung von Schullehrplänen. Es enthält Beispiele, Checklisten und methodische Hinweise für die Unterrichtsgestaltung.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <h3>Die wichtigsten Neuerungen</h3>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-inner">
+                            <ul>
+                                <li><strong>Kompetenzorientierung:</strong> Fokus auf anwendbares Können statt reines Wissen</li>
+                                <li><strong>Digitale Transformation:</strong> Integration digitaler Kompetenzen in alle Bereiche</li>
+                                <li><strong>Nachhaltigkeit:</strong> Verankerung der Bildung für nachhaltige Entwicklung</li>
+                                <li><strong>Flexibilität:</strong> Anpassung an aktuelle gesellschaftliche Entwicklungen</li>
+                                <li><strong>Spiralcurriculum:</strong> Kompetenzen werden über die gesamte Lehrzeit aufgebaut</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <h3>Ihre Fortschritte im Verständnis des SLP</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <p style="margin-top: 1rem;">Erkunden Sie alle Tabs und interaktiven Elemente, um Ihr Verständnis zu vertiefen!</p>
+            </div>
+        </div>
+
+        <!-- Kompetenzen Tab -->
+        <div id="competences" class="tab-content">
+            <h2>Die drei Kompetenzbereiche</h2>
+            
+            <div class="competence-grid">
+                <div class="competence-card" onclick="toggleCompetence(this)">
+                    <h4>🎯 Schlüsselkompetenzen</h4>
+                    <p>12 Kompetenzen für lebenslanges Lernen</p>
+                    <div class="competence-details">
+                        <p style="margin-bottom: 1rem; font-style: italic;">Die Schlüsselkompetenzen nach RLP Kapitel 3:</p>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.1</strong> Zwischen relevanten und irrelevanten Quellen unterscheiden</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.2</strong> Sich selbst Ziele setzen und überprüfen</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.3</strong> Innovative Wege der Problemlösung entwickeln</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.4</strong> In Teams zielgerichtet arbeiten</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.5</strong> Eigene Werthaltungen reflektieren</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.6</strong> Eigene Standpunkte begründen</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.7</strong> Unterschiedliche Standpunkte nachvollziehen</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.8</strong> Lebensphasen planen</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.9</strong> Vernetzt und systemisch denken</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.10</strong> Sich an Veränderungen anpassen</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.11</strong> Mit Mehrdeutigkeiten umgehen</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>3.2.12</strong> An gesellschaftlichen Prozessen partizipieren</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card" onclick="toggleCompetence(this)">
+                    <h4>💬 Sprache & Kommunikation</h4>
+                    <p>Rezeption, Produktion und Interaktion</p>
+                    <div class="competence-details">
+                        <p style="margin-bottom: 1rem;">Die Kommunikationsmodi umfassen:</p>
+                        <ul>
+                            <li><strong>Rezeption:</strong> Mündlich, audiovisuell, schriftlich und bildlich</li>
+                            <li><strong>Produktion:</strong> Mündlich, schriftlich/bildlich, multimedial</li>
+                            <li><strong>Interaktion:</strong> Mündlich, schriftlich, digital</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card" onclick="toggleCompetence(this)">
+                    <h4>🌍 Gesellschaft</h4>
+                    <p>8 Aspekte des gesellschaftlichen Lebens</p>
+                    <div class="competence-details">
+                        <p style="margin-bottom: 1rem;">Die Aspekte umfassen:</p>
+                        <ul>
+                            <li>Ethik</li>
+                            <li>Identität und Sozialisation</li>
+                            <li>Kultur</li>
+                            <li>Ökologie</li>
+                            <li>Politik</li>
+                            <li>Recht</li>
+                            <li>Technologie und digitale Transformation</li>
+                            <li>Wirtschaft</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Struktur Tab -->
+        <div id="structure" class="tab-content">
+            <h2>So wird ein SLP-Thema entwickelt</h2>
+            
+            <div class="process-flow">
+                <div class="process-step" onclick="toggleProcess(this)">
+                    <div class="process-number">1</div>
+                    <h3>Thema identifizieren</h3>
+                    <p>Subjektiv bedeutsame Lebenskontexte bestimmen</p>
+                    <div class="process-content">
+                        <p><strong>In dieser Phase:</strong></p>
+                        <ul>
+                            <li>Identifikation eines lebensnahen Themas</li>
+                            <li>Formulierung einer Leitidee</li>
+                            <li>Definition der Lebenskontexte</li>
+                            <li>Berücksichtigung von Aktualität und Wandel</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="process-step" onclick="toggleProcess(this)">
+                    <div class="process-number">2</div>
+                    <h3>Kompetenzen auswählen</h3>
+                    <p>RLP-Kompetenzen dem Thema zuordnen</p>
+                    <div class="process-content">
+                        <p><strong>Differenzierung nach Lehrdauer:</strong></p>
+                        <ul>
+                            <li>2-jährige Lehre: mind. 2 SK, 1 Modus, 2 Aspekte</li>
+                            <li>3-jährige Lehre: mind. 3 SK, 3 Modi, 3 Aspekte</li>
+                            <li>4-jährige Lehre: mind. 4 SK, 3 Modi, 4 Aspekte</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="process-step" onclick="toggleProcess(this)">
+                    <div class="process-number">3</div>
+                    <h3>Authentische Aufgabe entwickeln</h3>
+                    <p>Greifbares Produkt als Kompetenznachweis</p>
+                    <div class="process-content">
+                        <p><strong>Mögliche Produkte:</strong></p>
+                        <ul>
+                            <li>Podcast oder Videoblog</li>
+                            <li>Digitaler Ratgeber</li>
+                            <li>Interaktive Präsentation</li>
+                            <li>Portfolio oder Dossier</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="process-step" onclick="toggleProcess(this)">
+                    <div class="process-number">4</div>
+                    <h3>Kompetenzen konkretisieren</h3>
+                    <p>Kontextualisierung für das spezifische Thema</p>
+                    <div class="process-content">
+                        <p><strong>Konkretisierung umfasst:</strong></p>
+                        <ul>
+                            <li>RLP-Kompetenzen auf das Thema beziehen</li>
+                            <li>Lernziele operationalisieren</li>
+                            <li>Aktivitäten und Inhalte bestimmen</li>
+                            <li>Wissensbausteine definieren</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="process-step" onclick="toggleProcess(this)">
+                    <div class="process-number">5</div>
+                    <h3>Unterricht planen</h3>
+                    <p>Mikroplanung durch die Lehrperson</p>
+                    <div class="process-content">
+                        <p><strong>Unterrichtsplanung umfasst:</strong></p>
+                        <ul>
+                            <li>Konkrete Lernaktivitäten entwickeln</li>
+                            <li>Methoden und Medien auswählen</li>
+                            <li>Bewertungen planen</li>
+                            <li>Digitale Tools integrieren</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="showModal('spiral')">
+                🔄 Spiralcurriculum verstehen
+            </button>
+        </div>
+
+        <!-- Qualifikation Tab -->
+        <div id="qualification" class="tab-content">
+            <h2>Qualifikationsverfahren im Detail</h2>
+            
+            <div class="competence-grid">
+                <div class="competence-card" onclick="showModal('grades')">
+                    <h4>📝 Erfahrungsnoten</h4>
+                    <p>Kontinuierliche Bewertung während der Lehrzeit</p>
+                    <div class="competence-details">
+                        <ul>
+                            <li>Pro Semester je eine Note für SuK und Gesellschaft</li>
+                            <li>Kompetenzorientierte Prüfungsformen</li>
+                            <li>Formative und summative Bewertungen</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card" onclick="showModal('thesis')">
+                    <h4>📚 Schlussarbeit (3/4 Jahre)</h4>
+                    <p>25-35 Arbeitsstunden für gesellschaftsrelevantes Thema</p>
+                    <div class="competence-details">
+                        <ul>
+                            <li>Prozessdokumentation (40%)</li>
+                            <li>Produkt (40%)</li>
+                            <li>Präsentation & Verteidigung (20%)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card" onclick="showModal('exam')">
+                    <h4>✍️ Schlussprüfung</h4>
+                    <p>150 Minuten kompetenzorientiert</p>
+                    <div class="competence-details">
+                        <ul>
+                            <li>Lernbereichsübergreifende Aufgaben</li>
+                            <li>Transfer auf neue Situationen</li>
+                            <li>Mündlich oder schriftlich</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ressourcen Tab -->
+        <div id="resources" class="tab-content">
+            <h2>Werkzeuge und Ressourcen</h2>
+            
+            <div class="competence-grid">
+                <div class="competence-card" onclick="showModal('checklist')">
+                    <h4>✅ Checkliste SLP-Erstellung</h4>
+                    <p>Alle Vorgaben des RLP im Überblick</p>
+                </div>
+
+                <div class="competence-card" onclick="showModal('examples')">
+                    <h4>💡 Beispielsammlung</h4>
+                    <p>Konkrete Umsetzungsbeispiele</p>
+                </div>
+
+                <div class="competence-card" onclick="showModal('digital')">
+                    <h4>💻 Digitale Kompetenzen</h4>
+                    <p>Integration in den ABU</p>
+                </div>
+            </div>
+
+            <div class="link-box">
+                <h3>📚 Weiterführende Links</h3>
+                <ul>
+                    <li>
+                        <a href="#" class="tooltip">
+                            SBFI - Staatssekretariat für Bildung, Forschung und Innovation
+                            <span class="tooltip-content">Offizielle Stelle für Berufsbildung</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="tooltip">
+                            SBBK - Schweizerische Berufsbildungsämter-Konferenz
+                            <span class="tooltip-content">Koordination der kantonalen Ämter</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="tooltip">
+                            Berufsbildung.ch
+                            <span class="tooltip-content">Portal zur Berufsbildung</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="window.location.href='#'">
+                    🔄 Zur Kompetenzmatrix
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='#'" style="margin-left: 1rem;">
+                    📊 Zu den Themendetails
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Titel</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody">Inhalt</div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            
+            updateProgress();
+        }
+
+        // Accordion Toggle
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+            
+            header.parentElement.parentElement.querySelectorAll('.accordion-header').forEach(h => {
+                h.classList.remove('active');
+                h.nextElementSibling.classList.remove('active');
+            });
+            
+            if (!isActive) {
+                header.classList.add('active');
+                content.classList.add('active');
+            }
+            
+            updateProgress();
+        }
+
+        // Competence Card Toggle
+        function toggleCompetence(card) {
+            const details = card.querySelector('.competence-details');
+            details.classList.toggle('active');
+            updateProgress();
+        }
+
+        // Process Step Toggle
+        function toggleProcess(step) {
+            const content = step.querySelector('.process-content');
+            content.classList.toggle('active');
+            updateProgress();
+        }
+
+        // Modal Functions
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            
+            const modalContent = {
+                'spiral': {
+                    title: 'Das Spiralcurriculum',
+                    content: `
+                        <h4>Prinzip des spiralförmigen Kompetenzaufbaus:</h4>
+                        <p>Kompetenzen werden nicht einmalig behandelt, sondern über die gesamte Lehrzeit in verschiedenen Kontexten und mit steigender Komplexität aufgebaut:</p>
+                        <ul>
+                            <li><strong>1. Durchgang:</strong> Grundlegendes Verständnis</li>
+                            <li><strong>2. Durchgang:</strong> Anwendung in neuen Kontexten</li>
+                            <li><strong>3. Durchgang:</strong> Transfer und Vernetzung</li>
+                            <li><strong>4. Durchgang:</strong> Selbstständige, kreative Anwendung</li>
+                        </ul>
+                    `
+                },
+                'grades': {
+                    title: 'Erfahrungsnoten im Detail',
+                    content: `
+                        <h4>Generierung der Erfahrungsnoten:</h4>
+                        <ul>
+                            <li>Pro Semester zwei Teilnoten (SuK + Gesellschaft)</li>
+                            <li>Mindestens 3 Kompetenznachweise pro Teilbereich</li>
+                            <li>Kompetenzorientierte Prüfungsformen</li>
+                            <li>Arithmetisches Mittel aller Semesternoten</li>
+                        </ul>
+                    `
+                },
+                'thesis': {
+                    title: 'Schlussarbeit - Anforderungen',
+                    content: `
+                        <h4>Rahmenbedingungen:</h4>
+                        <ul>
+                            <li>25-35 Arbeitsstunden</li>
+                            <li>Gesellschaftsrelevante Fragestellung</li>
+                            <li>Begleitung durch ABU-Lehrperson</li>
+                            <li>Team- oder Einzelarbeit möglich</li>
+                        </ul>
+                        <h4>Bewertung:</h4>
+                        <ul>
+                            <li><strong>Prozess (40%):</strong> Planung, Durchführung, Reflexion</li>
+                            <li><strong>Produkt (40%):</strong> Inhalt und Form</li>
+                            <li><strong>Präsentation (20%):</strong> Inhalt und Auftreten</li>
+                        </ul>
+                    `
+                },
+                'exam': {
+                    title: 'Schlussprüfung',
+                    content: `
+                        <h4>Format:</h4>
+                        <ul>
+                            <li>Dauer: 150 Minuten (schriftlich) oder 20 Minuten (mündlich)</li>
+                            <li>Einzelprüfung</li>
+                            <li>Lernbereichsübergreifende Aufgaben</li>
+                        </ul>
+                        <h4>Anforderungen:</h4>
+                        <ul>
+                            <li>Transfer auf neue Situationen</li>
+                            <li>Vernetzte Problemlösung</li>
+                            <li>Kritische Reflexion</li>
+                        </ul>
+                    `
+                },
+                'checklist': {
+                    title: 'Checkliste SLP-Erstellung',
+                    content: `
+                        <h4>Der Schullehrplan muss:</h4>
+                        <ul>
+                            <li>☐ Zeitlich, pädagogisch und didaktisch organisiert sein</li>
+                            <li>☐ Verknüpfung der Kompetenzen sichtbar machen</li>
+                            <li>☐ Jede Schlüsselkompetenz mind. 1x berücksichtigen</li>
+                            <li>☐ Jeden Kommunikationsmodus mind. 1x einbeziehen</li>
+                            <li>☐ Jeden Aspekt mind. 1x behandeln</li>
+                            <li>☐ Spiralförmiges Curriculum umsetzen</li>
+                            <li>☐ QV detailliert regeln</li>
+                        </ul>
+                    `
+                }
+            };
+            
+            const content = modalContent[type] || {
+                title: 'Information',
+                content: '<p>Weitere Informationen folgen...</p>'
+            };
+            
+            title.textContent = content.title;
+            body.innerHTML = content.content;
+            
+            modal.classList.add('active');
+            updateProgress();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Progress Tracking
+        let visitedElements = new Set();
+
+        function updateProgress() {
+            visitedElements.add(document.querySelector('.tab button.active').textContent);
+            
+            const totalElements = 20;
+            const visited = visitedElements.size;
+            const progress = Math.min(Math.round((visited / totalElements) * 100), 100);
+            
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
